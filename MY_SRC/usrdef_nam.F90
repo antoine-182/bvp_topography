@@ -162,15 +162,15 @@ CONTAINS
       kperio = 0                    ! AM98 configuration : closed domain
       !
 # if defined key_bvp
-      WRITE( numond, namusr_def ) 'key_bvp activated'
+      WRITE(*,*) 'key_bvp activated'
 #else 
-      WRITE( numond, namusr_def ) 'key_bvp deactivated'
+      WRITE(*,*) 'key_bvp deactivated'
 #endif
 
 # if defined key_bvp_bath
-      WRITE( numond, namusr_def ) 'key_bvp_bath activated'
+      WRITE(*,*) 'key_bvp_bath activated'
 #else 
-      WRITE( numond, namusr_def ) 'key_bvp_bath deactivated'
+      WRITE(*,*) 'key_bvp_bath deactivated'
 #endif
 
 

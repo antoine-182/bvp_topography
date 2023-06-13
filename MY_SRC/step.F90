@@ -160,53 +160,12 @@ CONTAINS
          vv(ji,jj,jk,Nrhs) = vv(ji,jj,jk,Nrhs) - grav * ( zssh(ji,jj+1) - zssh(ji,jj) ) * r1_e2v(ji,jj)
       END_3D
       !
-
-!!an
-! Tentative - Echec
-      ! IF ( kstp == nit000 ) WRITE(numout,*) 'gradient rigolo'
-      ! DO_2D_00_00
-      !    zuu(ji,jj) = ( zssh(ji+1,jj  ) - zssh(ji,jj) ) * r1_e1u(ji,jj)
-      !    zvv(ji,jj) = ( zssh(ji  ,jj+1) - zssh(ji,jj) ) * r1_e2v(ji,jj)
-      ! END_2D
-      ! CALL lbc_lnk_multi( 'stp', zuu, 'U', 1. , zvv, 'V', 1. )
-      ! DO_2D_00_00
-      !    zFu(ji,jj) = 0.25_wp * ( zuu(ji  ,jj+1) + zuu(ji,jj) )
-      !    zFv(ji,jj) = 0.25_wp * ( zvv(ji+1,jj  ) + zvv(ji,jj) )
-      ! END_2D
-      ! CALL lbc_lnk_multi( 'stp', zFu, 'F', 1. , zFu, 'F', 1. )
-      ! DO_3D_00_00( 1, jpkm1 )
-      !     ! à l'intérieur du bassin
-      !    IF (fmask(ji,jj,1)*fmask(ji,jj+1,1) == 1._wp) THEN
-      !      uu(ji,jj+1,jk,Nrhs) = uu(ji,jj,jk,Nrhs) - grav * ( zFu(ji,jj+1) + zFu(ji,jj))
-      !    ELSE
-      !      uu(ji,jj,jk,Nrhs) = uu(ji,jj,jk,Nrhs) - grav * ( zssh(ji+1,jj) - zssh(ji,jj) ) * r1_e1u(ji,jj)
-      !    ENDIF
-      !    IF (fmask(ji,jj,1)*fmask(ji+1,jj,1) == 1._wp) THEN
-      !      vv(ji+1,jj,jk,Nrhs) = vv(ji,jj,jk,Nrhs) - grav * ( zFv(ji+1,jj) + zFv(ji,jj))
-      !   ELSE
-      !     vv(ji,jj,jk,Nrhs) = vv(ji,jj,jk,Nrhs) - grav * ( zssh(ji,jj+1) - zssh(ji,jj) ) * r1_e2v(ji,jj)
-      !    ENDIF
-      ! END_3D
-!
-!!an
-!      IF( kstp == nit000 .AND. lwp ) THEN
-!         WRITE(numout,*)
-!         WRITE(numout,*) 'step.F90 : classic script used'
-!         WRITE(numout,*) '~~~~~~~'
-!         IF(       ln_dynvor_ens_adVO .OR. ln_dynvor_ens_adKE .OR. ln_dynvor_ens_adKEVO   &
-!         &    .OR. ln_dynvor_ene_adVO .OR. ln_dynvor_ene_adKE .OR. ln_dynvor_ene_adKEVO   ) THEN
-!            CALL ctl_stop('STOP','step : alternative direction asked but classis step'  )
-!         ENDIF
-!      ENDIF
-!!an
-
-# if defined key_bath
+# if defined key_bvp_bath
       DO_3D_00_00(1,jpkm1)
          uu(ji,jj,jk,Nrhs) = uu(ji,jj,jk,Nrhs) + grav * ( batht(ji+1,jj  ) - batht(ji,jj) ) * r1_e1u(ji,jj)
          vv(ji,jj,jk,Nrhs) = vv(ji,jj,jk,Nrhs) + grav * ( batht(ji  ,jj+1) - batht(ji,jj) ) * r1_e1v(ji,jj)
       END_3D
 #endif
-
                          CALL dyn_adv( kstp, Nbb, Nnn      , uu, vv, Nrhs )  ! advection (VF or FF)	==> RHS
 
                          CALL dyn_vor( kstp, Nbb, Nnn      , uu, vv, Nrhs)   ! vorticity           	==> RHS
@@ -234,62 +193,10 @@ CONTAINS
          vv(ji,jj,jk,Nrhs) = vv(ji,jj,jk,Nrhs) + z1_2rho0 * ( vtau_b(ji,jj) + vtau(ji,jj) ) / ze3v(ji,jj,jk)
       END_3D
 
-# if defined key_bvp
-      IF ( kstp == nit000 ) write(numout,*) 'step : layer drag penalisation used nn_rfr=',nn_rfr
-      SELECT CASE( nn_rfr )           ! == layer drag formulation
-      CASE ( -2 )
-        DO_3D_00_00(1,jpkm1)
-           uu(ji,jj,jk,Nrhs) = uu(ji,jj,jk,Nrhs) - rn_rfr * uu(ji,jj,jk,Nbb) * rpou(ji,jj,jk) * rpou(ji,jj,jk)
-           vv(ji,jj,jk,Nrhs) = vv(ji,jj,jk,Nrhs) - rn_rfr * vv(ji,jj,jk,Nbb) * rpov(ji,jj,jk) * rpov(ji,jj,jk)
-        END_3D
-      CASE ( -1 )
-        DO_3D_00_00(1,jpkm1)
-           uu(ji,jj,jk,Nrhs) = uu(ji,jj,jk,Nrhs) - rn_rfr * uu(ji,jj,jk,Nbb) * rpou(ji,jj,jk)
-           vv(ji,jj,jk,Nrhs) = vv(ji,jj,jk,Nrhs) - rn_rfr * vv(ji,jj,jk,Nbb) * rpov(ji,jj,jk)
-        END_3D
-      CASE ( 0 )
-        DO_3D_00_00(1,jpkm1)
-           uu(ji,jj,jk,Nrhs) = uu(ji,jj,jk,Nrhs) - rn_rfr * uu(ji,jj,jk,Nbb)
-           vv(ji,jj,jk,Nrhs) = vv(ji,jj,jk,Nrhs) - rn_rfr * vv(ji,jj,jk,Nbb)
-        END_3D
-      CASE ( 1 )
-        DO_3D_00_00(1,jpkm1)
-           uu(ji,jj,jk,Nrhs) = uu(ji,jj,jk,Nrhs) - rn_rfr * uu(ji,jj,jk,Nbb) * r1_rpou(ji,jj,jk)
-           vv(ji,jj,jk,Nrhs) = vv(ji,jj,jk,Nrhs) - rn_rfr * vv(ji,jj,jk,Nbb) * r1_rpov(ji,jj,jk)
-        END_3D
-      CASE ( 2 )
-        DO_3D_00_00(1,jpkm1)
-           uu(ji,jj,jk,Nrhs) = uu(ji,jj,jk,Nrhs) - rn_rfr * uu(ji,jj,jk,Nbb) * SQRT(r1_rpou(ji,jj,jk))
-           vv(ji,jj,jk,Nrhs) = vv(ji,jj,jk,Nrhs) - rn_rfr * vv(ji,jj,jk,Nbb) * SQRT(r1_rpov(ji,jj,jk))
-        END_3D
-      CASE ( 3 )
-        DO_3D_00_00(1,jpkm1)
-           uu(ji,jj,jk,Nrhs) = uu(ji,jj,jk,Nrhs) - rn_rfr * uu(ji,jj,jk,Nbb) * ( r1_rpou(ji,jj,jk) ** ( REAL(nn_rfr, wp) ) )
-           vv(ji,jj,jk,Nrhs) = vv(ji,jj,jk,Nrhs) - rn_rfr * vv(ji,jj,jk,Nbb) * ( r1_rpov(ji,jj,jk) ** ( REAL(nn_rfr, wp) ) )
-        END_3D
-      CASE DEFAULT                                             ! error
-         CALL ctl_stop('STOP','step: wrong value for nn_rfr'  )
-      END SELECT
-! # elif defined key_bath
-!       z3du(:,:,:) = 0._wp ; z3dv(:,:,:) = 0._wp
-!       WHERE(bathu(:,:) <= 4750._wp)
-!         z3du(:,:,1) = 1._wp
-!         z3du(:,:,2) = 1._wp
-!       END WHERE
-!       WHERE(bathv(:,:) <= 4750._wp)
-!         z3dv(:,:,1) = 1._wp
-!         z3dv(:,:,2) = 1._wp
-!       END WHERE
-!       DO_3D_00_00(1,jpkm1)
-!          uu(ji,jj,jk,Nrhs) = uu(ji,jj,jk,Nrhs) - ( rn_rfr + rn_fsp*z3du(ji,jj,jk) ) * uu(ji,jj,jk,Nbb)
-!          vv(ji,jj,jk,Nrhs) = vv(ji,jj,jk,Nrhs) - ( rn_rfr + rn_fsp*z3dv(ji,jj,jk) ) * vv(ji,jj,jk,Nbb)
-!       END_3D
-# else
       DO_3D_00_00(1,jpkm1)
         uu(ji,jj,jk,Nrhs) = uu(ji,jj,jk,Nrhs) - rn_rfr * uu(ji,jj,jk,Nbb)
         vv(ji,jj,jk,Nrhs) = vv(ji,jj,jk,Nrhs) - rn_rfr * vv(ji,jj,jk,Nbb)
       END_3D
-#endif
 
 
 # if defined key_bvp
@@ -386,35 +293,6 @@ CONTAINS
 
       CALL lbc_lnk_multi( 'stp', uu(:,:,:,Nnn), 'U', -1., vv(:,:,:,Nnn), 'V', -1.,   &   !* local domain boundaries
          &                       uu(:,:,:,Naa), 'U', -1., vv(:,:,:,Naa), 'V', -1.    )
-
-!!an shapiro filter 2D
-!Falissard, Fabrice. (2013).
-! DO_3D_11_11(1,jpkm1)
-!     uu (ji,jj,jk,Nnn) = 0.0625_wp * (8*uu(ji,jj,jk,Nnn) + 2*uu(ji+1,jj,jk,Nnn) - uu(ji+2,jj,jk,Nnn) + uu(ji+1,jj+1,jk,Nnn) )
-!     vv (ji,jj,jk,Nnn) = 0.0625_wp * (8*vv(ji,jj,jk,Nnn) + 2*vv(ji+1,jj,jk,Nnn) - vv(ji+2,jj,jk,Nnn) + vv(ji+1,jj+1,jk,Nnn) )
-!     e3t(ji,jj,jk,Nnn) = 0.0625_wp * (8*e3t(ji,jj,jk,Nnn) + 2*e3t(ji+1,jj,jk,Nnn) - e3t(ji+2,jj,jk,Nnn) + e3t(ji+1,jj+1,jk,Nnn) )
-!     e3u(ji,jj,jk,Nnn) = 0.0625_wp * (8*e3u(ji,jj,jk,Nnn) + 2*e3u(ji+1,jj,jk,Nnn) - e3u(ji+2,jj,jk,Nnn) + e3u(ji+1,jj+1,jk,Nnn) )
-!     e3v(ji,jj,jk,Nnn) = 0.0625_wp * (8*e3v(ji,jj,jk,Nnn) + 2*e3v(ji+1,jj,jk,Nnn) - e3v(ji+2,jj,jk,Nnn) + e3v(ji+1,jj+1,jk,Nnn) )
-!     !
-!     uu (ji,jj,jk,Naa) = 0.0625_wp * (8*uu(ji,jj,jk,Naa) + 2*uu(ji+1,jj,jk,Naa) - uu(ji+2,jj,jk,Naa) + uu(ji+1,jj+1,jk,Naa) )
-!     vv (ji,jj,jk,Naa) = 0.0625_wp * (8*vv(ji,jj,jk,Naa) + 2*vv(ji+1,jj,jk,Naa) - vv(ji+2,jj,jk,Naa) + vv(ji+1,jj+1,jk,Naa) )
-!     e3t(ji,jj,jk,Naa) = 0.0625_wp * (8*e3t(ji,jj,jk,Naa) + 2*e3t(ji+1,jj,jk,Naa) - e3t(ji+2,jj,jk,Naa) + e3t(ji+1,jj+1,jk,Naa) )
-!     e3u(ji,jj,jk,Naa) = 0.0625_wp * (8*e3u(ji,jj,jk,Naa) + 2*e3u(ji+1,jj,jk,Naa) - e3u(ji+2,jj,jk,Naa) + e3u(ji+1,jj+1,jk,Naa) )
-!     e3v(ji,jj,jk,Naa) = 0.0625_wp * (8*e3v(ji,jj,jk,Naa) + 2*e3v(ji+1,jj,jk,Naa) - e3v(ji+2,jj,jk,Naa) + e3v(ji+1,jj+1,jk,Naa) )
-! END_3D
-! CALL lbc_lnk_multi( 'stp', uu(:,:,:,Nnn), 'U', -1., vv(:,:,:,Nnn), 'V', -1.,   &   !* local domain boundaries
-!    &                       uu(:,:,:,Naa), 'U', -1., vv(:,:,:,Naa), 'V', -1.    )
-! CALL lbc_lnk_multi( 'stp', e3t(:,:,:,Nnn), 'T', 1., e3u(:,:,:,Nnn), 'U', -1.,e3v(:,:,:,Nnn), 'V', -1.,   &   !* local domain boundaries
-!   &                        e3t(:,:,:,Naa), 'T', 1., e3u(:,:,:,Naa), 'U', -1.,e3v(:,:,:,Naa), 'V', -1.    )
-!DO_3D_11_11(1,jpkm1)
-!     uu (ji,jj,jk,Nnn) = 0.25 * (2*uu(ji,jj,jk,Nnn) + uu(ji+1,jj,jk,Nnn) - uu(ji-1,jj,jk,Nnn) )
-!     vv (ji,jj,jk,Nnn) = 0.25 * (2*uu(ji,jj,jk,Nnn) + uu(ji+1,jj,jk,Nnn) - uu(ji-1,jj,jk,Nnn) )
-!     e3t(ji,jj,jk,Nnn) = 0.25 * (2*uu(ji,jj,jk,Nnn) + uu(ji+1,jj,jk,Nnn) - uu(ji-1,jj,jk,Nnn) )
-!     e3u(ji,jj,jk,Nnn) = 0.25 * (2*uu(ji,jj,jk,Nnn) + uu(ji+1,jj,jk,Nnn) - uu(ji-1,jj,jk,Nnn) )
-!     e3v(ji,jj,jk,Nnn) = 0.25 * (2*uu(ji,jj,jk,Nnn) + uu(ji+1,jj,jk,Nnn) - uu(ji-1,jj,jk,Nnn) )
-! END_3D
-! CALL lbc_lnk_multi( 'stp', uu(:,:,:,Nnn), 'U', -1., vv(:,:,:,Nnn), 'V', -1.,   &   !* local domain boundaries
-!    &                       uu(:,:,:,Naa), 'U', -1., vv(:,:,:,Naa), 'V', -1.    )
 
       !>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
       ! Set boundary conditions, time filter and swap time levels

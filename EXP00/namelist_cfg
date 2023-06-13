@@ -95,10 +95,10 @@
   !ln_mir_e3f      = .false.   ! e3f mirrored at the coast (overrule nn_een_e3f !)
   ln_mir_h         = .false.   ! half cells in continuity equations
   !
-  !! [key_bvp]
+  !! [key_bvp / key_bvp_bath ]
   rn_abp     = 0.01    ! alpha boundary parameter                                       [-]
-  rn_cnp     = 2       ! size of the penalised domain (in number of cells)              [-]
-  nn_smo     = 0        ! smoothing parameters (X x Y shapiro filters applied nn_smo times)            [-]
+  rn_cnp     = 2       ! width of the penalised interface              [-]
+  nn_smo     = 0       ! nb of passes of Shapiro filters            [-]
   rn_fsp     = 1.e-4       ! friction parameter 1/epsilon of the permeability               [1/s]
       nn_fsp = 0          ! =0   rn_fsp              applied for rpo < 1/2
                           ! =1   rn_fsp / rpo        applied for rpo < 1

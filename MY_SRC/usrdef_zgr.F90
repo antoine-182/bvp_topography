@@ -194,8 +194,8 @@ CONTAINS
       !
       CALL lbc_lnk( 'usrdef_zgr', z2d, 'T', 1. )           ! set surrounding land to zero (here jperio=0 ==>> closed)
       !
-# if defined key_bvp_bath
-      WRITE(numout,*) 'usrdef_zgr : (bath) mask enlarged of nn_gc'
+# if defined key_bvp_bath && defined key_bvp
+      WRITE(numout,*) 'usrdef_zgr : (bath or bvp) mask enlarged of nn_gc'
       IF ( lwp ) WRITE(numout,*) 'usrdef_zgr : when nn_gc!=0, the basin is widened on each side of nn_gc (rn_cnp/2<nn_gc)     '
       ze1 = REAL(nn_gc,wp) * ( rn_dx / REAL(nn_AM98, wp) )      ! [m] gridspacing used
       !
@@ -259,12 +259,6 @@ CONTAINS
                ! au bit près peut faire des glitches, mieux vaut rallonger de 10%
                IF ( gphit(ji,jj) > zylim0 .AND. gphit(ji,jj) < zylim1 .AND. &
                   & glamt(ji,jj) > zxlim0 .AND. glamt(ji,jj) < zxlim1       )  THEN
-                 ! on élargit de 10% les frontières, et V et U à droite et en haut de T (0.9 = -0.1 + 1) (0.1 = +0.1)
-                 ! IF ( gphiv(ji,jj) > (zylim0 + 0.9_wp*zey_do) .AND. gphiv(ji,jj) < (zylim1 + 0.1_wp*zey_up) .AND. &
-                 !    & glamu(ji,jj) > (zxlim0 + 0.9_wp*zex_le) .AND. glamu(ji,jj) < (zxlim1 + 0.1_wp*zex_ri)       )  THEN
-                 ! pour 45° on élargit (-0.1 = -0.1 + 0)
-                 ! IF ( gphiv(ji,jj) > (zylim0 - 0.1_wp*zey) .AND. gphiv(ji,jj) < (zylim1 + 1.1_wp*zey) .AND. &
-                 !    & glamu(ji,jj) > (zxlim0 - 0.1_wp*zex) .AND. glamu(ji,jj) < (zxlim1 + 1.1_wp*zex)       )  THEN
                  k_top(ji,jj) = 1    ! = ocean (T point)
                  k_bot(ji,jj) = NINT( z2d(ji,jj) )
                END IF

@@ -61,7 +61,6 @@ MODULE usrdef_nam
    INTEGER , PUBLIC ::   nn_smo             ! smoothing parameters (X x Y shapiro filters applied nn_smo times)
    REAL(wp), PUBLIC ::   rn_fsp             ! friction parameter 1/epsilon of the permeability               [1/s]
    !
-   INTEGER , PUBLIC ::   nn_rfr             ! layer friction for penalisation                      [1/s]
    INTEGER , PUBLIC ::   nn_fsp             ! friction parameter type                              [1/s]
    !
    REAL(wp), PUBLIC ::   r1_abp             ! inverse alpha boundary parameter                            [-]
@@ -163,6 +162,20 @@ CONTAINS
       kperio = 0                    ! AM98 configuration : closed domain
       !
 # if defined key_bvp
+      WRITE( numond, namusr_def ) 'key_bvp activated'
+#else 
+      WRITE( numond, namusr_def ) 'key_bvp deactivated'
+#endif
+
+# if defined key_bvp_bath
+      WRITE( numond, namusr_def ) 'key_bvp_bath activated'
+#else 
+      WRITE( numond, namusr_def ) 'key_bvp_bath deactivated'
+#endif
+
+
+
+# if defined key_bvp
       r1_abp = 1._wp / rn_abp
 #endif
       !                             ! control print
@@ -182,7 +195,6 @@ CONTAINS
          WRITE(numout,*) '                           friction parameter           rn_fsp   = ', rn_fsp, '1/s'
          WRITE(numout,*) '                           size of the penz             rn_cnp   = ', rn_cnp
          WRITE(numout,*) '                           smoothing parameter          nn_smo   = ', nn_smo
-         WRITE(numout,*) '                           friction type                nn_rfr   = ', nn_rfr
          WRITE(numout,*) '                           bvp friction type            nn_fsp   = ', nn_fsp
 #endif
          WRITE(numout,*) '   '

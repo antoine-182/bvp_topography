@@ -178,7 +178,6 @@ CONTAINS
       IF( iom_use("rpou") )   CALL iom_put( "rpou", rpou(:,:,1) )
       IF( iom_use("rpov") )   CALL iom_put( "rpov", rpov(:,:,1) )
       IF( iom_use("rpof") )   CALL iom_put( "rpof", rpof(:,:,1) )
-      IF( iom_use("bmpt") )   CALL iom_put( "bmpt", bmpt(:,:,1) )
       IF( iom_use("bmpu") )   CALL iom_put( "bmpu", bmpu(:,:,1) )
       IF( iom_use("bmpv") )   CALL iom_put( "bmpv", bmpv(:,:,1) )
 #endif

@@ -46,7 +46,6 @@ MODULE oce
       REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:,:)     ::   r1_rpou         !
       REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:,:)     ::   r1_rpov         !
       REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:,:)     ::   r1_rpof         !
-      REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:,:)     ::   bmpt            !: T - permeability   (sigma)  [1/s]
       REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:,:)     ::   bmpu            !: U - permeability   (sigma)  [1/s]
       REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:,:)     ::   bmpv            !: V - permeability   (sigma)  [1/s]
 #endif
@@ -128,7 +127,7 @@ CONTAINS
 # if defined key_bvp
       ALLOCATE(     rpo(jpi,jpj,jpk),    rpou(jpi,jpj,jpk),    rpov(jpi,jpj,jpk),    rpof(jpi,jpj,jpk),   &
          &       r1_rpo(jpi,jpj,jpk), r1_rpou(jpi,jpj,jpk), r1_rpov(jpi,jpj,jpk), r1_rpof(jpi,jpj,jpk),   &
-         &         bmpt(jpi,jpj,jpk),    bmpu(jpi,jpj,jpk),    bmpv(jpi,jpj,jpk),            STAT=ierr(6) )
+         &                               bmpu(jpi,jpj,jpk),    bmpv(jpi,jpj,jpk),            STAT=ierr(6) )
 #endif
          !
       oce_alloc = MAXVAL( ierr )

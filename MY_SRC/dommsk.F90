@@ -206,17 +206,13 @@ CONTAINS
 # if defined key_bvp
       !  Penalize the first inner layer of fluid
       ! -----------------------------------------------------
-!!an to be added : lissage sur rn_cnp dx
       rpo    (:,:,:) = 1._wp
       rpou   (:,:,:) = 1._wp
       rpov   (:,:,:) = 1._wp
       rpof   (:,:,:) = 1._wp
-      !
-      bmpt(:,:,:) = 1._wp
-      !      !
+      !      !      !
       WHERE(tmask(:,:,:) == 0._wp)
         rpo   (:,:,:) = rn_abp             ! used on T points
-        bmpt  (:,:,:) = 0._wp              ! used on T points
       END WHERE
       WHERE(umask(:,:,:) == 0._wp)
         rpou  (:,:,:) = rn_abp             ! used on U points
@@ -230,7 +226,6 @@ CONTAINS
       END WHERE
       !
       CALL lbc_lnk_multi( 'dommsk', rpo ,  'T', 1._wp,                      &
-              &                     bmpt,  'T', 1._wp,                      &
               &                     rpou,  'U', 1._wp,                      &
               &                     rpov,  'V', 1._wp,                      &
               &                     rpof,  'F', 1._wp, kfillmode=jpfillcopy )
@@ -671,32 +666,17 @@ CONTAINS
         rpo(:,:,:) = z3d(:,:,:)
         !
         WHERE(tmask(:,:,:) == 0._wp)
-          rpo   (:,:,:) = rn_abp             ! used on T points
+          rpo(:,:,:) = rn_abp             ! used on T points
         END WHERE
       END DO
       !
       !! classic penalisation
-      ! DO_3D_00_00(1,jpkm1) // END_3D
-      ! rpou   (ji,jj,jk) = 0.5_wp  * (    rpo(ji,jj  ,jk) +    rpo(ji+1,jj  ,jk)   )
-      ! rpov   (ji,jj,jk) = 0.5_wp  * (    rpo(ji,jj  ,jk) +    rpo(ji  ,jj+1,jk)   )
-      ! rpof   (ji,jj,jk) = 0.25_wp * (    rpo(ji,jj+1,jk) +    rpo(ji+1,jj+1,jk)   &
-      ! &                         +    rpo(ji,jj  ,jk) +    rpo(ji+1,jj  ,jk)   )
-      DO jk = 1,jpk
-        DO jj = 1, jpjm1
-           DO ji = 1, jpim1
-               IF (umask(ji,jj,jk) == 1._wp ) THEN
-                 rpou(ji,jj,jk) = 0.5_wp  * (    rpo(ji,jj  ,jk) +    rpo(ji+1,jj  ,jk)   )
-               ENDIF
-               IF (vmask(ji,jj,jk) == 1._wp ) THEN
-                 rpov(ji,jj,jk) = 0.5_wp  * (    rpo(ji,jj  ,jk) +    rpo(ji  ,jj+1,jk)   )
-              ENDIF
-               IF (fmask(ji,jj,jk) == 1._wp ) THEN
-                 rpof(ji,jj,jk) = 0.25_wp * (    rpo(ji,jj+1,jk) +    rpo(ji+1,jj+1,jk)   &
-                     &                      +    rpo(ji,jj  ,jk) +    rpo(ji+1,jj  ,jk)   )
-              ENDIF
-          END DO
-       END DO
-     END DO
+      DO_3D_00_00(1,jpkm1)
+      rpou   (ji,jj,jk) = 0.5_wp  * (    rpo(ji,jj  ,jk) +    rpo(ji+1,jj  ,jk)   )
+      rpov   (ji,jj,jk) = 0.5_wp  * (    rpo(ji,jj  ,jk) +    rpo(ji  ,jj+1,jk)   )
+      rpof   (ji,jj,jk) = 0.25_wp * (    rpo(ji,jj+1,jk) +    rpo(ji+1,jj+1,jk)   &
+           &                        +    rpo(ji,jj  ,jk) +    rpo(ji+1,jj  ,jk)   )
+      END_3D
       !
       CALL lbc_lnk_multi( 'dommsk', rpov  , 'V', 1._wp,     &
           &                         rpou  , 'U', 1._wp,     &
@@ -723,52 +703,11 @@ CONTAINS
               &                     r1_rpov  , 'V', 1._wp,                     &
               &                     r1_rpof  , 'F', 1._wp, kfillmode=jpfillcopy )
       !
-
-      !
-      !
       !  Friction applied on the inner boundary layer
       ! -------------------------------------------------
       bmpu(:,:,:) = 0._wp
       bmpv(:,:,:) = 0._wp
       !
-      ! especially for upwellings
-      z1d =  rn_dx / REAL(nn_AM98, wp)
-      DO_2D_00_00
-        ! normal to North and South coast
-        ! z1y =    tanh( (gphit(ji,jj) - 0._wp       - z1d*0.5_wp )/(rn_cnp * z1d) ) +       &
-        !     &  - tanh( (gphit(ji,jj) - 2000000._wp + z1d*0.5_wp )/(rn_cnp * z1d) ) - 1._wp
-        ! z1y = (1._wp - rn_abp) * z1y + rn_abp
-        ! z1x =    tanh( (gphit(ji,jj+1) - 0._wp       - z1d*0.5_wp )/(rn_cnp * z1d) ) +       &
-        !     &  - tanh( (gphit(ji,jj+1) - 2000000._wp + z1d*0.5_wp )/(rn_cnp * z1d) ) - 1._wp
-        ! z1x = (1._wp - rn_abp) * z1x + rn_abp
-        ! z1d = 0.5_wp * ( z1y + z1x )
-        ! ! bmpv(ji,jj, 1:jpkm1) = rn_fsp * 0.5_wp * ( ff_t(ji,jj) + ff_t(ji  ,jj+1) )   &
-        ! !    &                                   * (1._wp - z1d)
-        ! bmpv(ji,jj, 1:jpkm1) = rn_fsp * (1._wp - z1d)
-        !
-        ! normal to the East and West coast
-        ! z1y =    tanh( (glamt(ji,jj) - 0._wp    v   - z1d*0.5_wp )/(rn_cnp * z1d) ) +       &
-        !     &  - tanh( (glamt(ji,jj) - 2000000._wp + z1d*0.5_wp )/(rn_cnp * z1d) ) - 1._wp
-        ! z1y = (1._wp - rn_abp) * z1y + rn_abp
-        ! z1x =    tanh( (glamt(ji+1,jj) - 0._wp       - z1d*0.5_wp )/(rn_cnp * z1d) ) +       &
-        !     &  - tanh( (glamt(ji+1,jj) - 2000000._wp + z1d*0.5_wp )/(rn_cnp * z1d) ) - 1._wp
-        ! z1x = (1._wp - rn_abp) * z1x + rn_abp
-        ! z1d = 0.5_wp * ( z1y + z1x )
-        !
-        ! North and South paralell to the coast (0°)
-        ! z1y =    tanh( (gphit(ji,jj) - 0._wp       - z1d*0.5_wp )/(rn_cnp * z1d) ) +       &
-        !     &  - tanh( (gphit(ji,jj) - 2000000._wp + z1d*0.5_wp )/(rn_cnp * z1d) ) - 1._wp
-        ! z1y = (1._wp - rn_abp) * z1y + rn_abp
-        ! !
-        ! (0°)
-        ! bmpu(ji,jj, 1:jpkm1) = rn_fsp * (1._wp - z1y)
-        !(45°)
-        ! bmpu(ji,jj, 1:jpkm1) = rn_fsp * (1._wp - z1y) / SQRT(2._wp)
-        ! bmpv(ji,jj, 1:jpkm1) = rn_fsp * (1._wp - z1y) / SQRT(2._wp)
-        ! bmpu(ji,jj, 1:jpkm1) = rn_fsp * MIN(1._wp - z1y, 1._wp - z1d)
-        !
-      END_2D
-      CALL lbc_lnk_multi( 'dommsk', bmpu,  'U', 1._wp, bmpv  , 'V', 1._wp, kfillmode=jpfillcopy )
       WHERE(vmask(:,:,:) == 0._wp)
         bmpv  (:,:,:) = 0             ! used on V points
       END WHERE
@@ -777,27 +716,7 @@ CONTAINS
       END WHERE
       !
       WRITE(numout,*) 'dommsk : impermeability bmp (sigma) used nn_fsp=',nn_fsp
-      SELECT CASE( nn_fsp )           ! == layer drag formulation
-      CASE ( -5 )
-        WHERE(rpou(:,:,:) > 0.5_wp)
-          bmpu  (:,:,:) = rn_fsp           ! used on V points
-        END WHERE
-        WHERE(rpov(:,:,:) > 0.5_wp)
-          bmpv  (:,:,:) = rn_fsp             ! used on U points
-        END WHERE
-      CASE ( -4 )
-        WHERE(rpou(:,:,:) <= 1._wp)
-          bmpu  (:,:,:) = rn_fsp * rpou(:,:,:)             ! used on V points
-        END WHERE
-        WHERE(rpov(:,:,:) <= 1._wp)
-          bmpv  (:,:,:) = rn_fsp * rpov(:,:,:)            ! used on U points
-        END WHERE
-      CASE ( -1 )
-        bmpu  (:,:,:) = 0._wp
-        bmpv  (:,:,:) = 0._wp
-      CASE ( -2 )
-        bmpu  (:,:,:) = 0._wp
-        bmpv  (:,:,:) = 0._wp
+      SELECT CASE( nn_fsp )           ! == layer drag formulation        
       CASE ( 0 )
         WHERE(rpou(:,:,:) <= 0.5_wp)
           bmpu  (:,:,:) = rn_fsp             ! used on V points
@@ -812,33 +731,10 @@ CONTAINS
         WHERE(rpov(:,:,:) <= 1._wp)
           bmpv  (:,:,:) = rn_fsp * r1_rpov(:,:,:)
         END WHERE
-      CASE ( 2 )
-        WHERE(rpou(:,:,:) <= 1._wp)
-          bmpu  (:,:,:) = rn_fsp * SQRT(r1_rpou(:,:,:))             ! used on V points
-        END WHERE
-        WHERE(rpov(:,:,:) <= 1._wp)
-          bmpv  (:,:,:) = rn_fsp * SQRT(r1_rpov(:,:,:))
-        END WHERE
       CASE DEFAULT                                             ! error
          CALL ctl_stop('STOP','dommsk: wrong value for nn_fsp'  )
       END SELECT
-      !
-      ! DO_2D_00_00
-      !    bmpu(ji,jj, 1:jpkm1) = rn_fsp * 0.5_wp * ( ff_t(ji,jj) + ff_t(ji+1,jj  ) )   &
-      !       &                          * (1._wp - rpou(ji,jj,1:jpkm1)) * r1_rpou(ji,jj,1:jpkm1)
-      !    bmpv(ji,jj, 1:jpkm1) = rn_fsp * 0.5_wp * ( ff_t(ji,jj) + ff_t(ji  ,jj+1) )   &
-      !       &                          * (1._wp - rpov(ji,jj,1:jpkm1)) * r1_rpov(ji,jj,1:jpkm1)
-      ! END_2D
 
-      ! DO_2D_00_00
-      !    bmpu(ji,jj, 1:jpkm1) = rn_fsp * ( 1._wp - rpou(ji,jj,1:jpkm1) )
-      !    bmpv(ji,jj, 1:jpkm1) = rn_fsp * ( 1._wp - rpov(ji,jj,1:jpkm1) )
-      ! END_2D
-      !
-      ! constant
-      ! DO_2D_00_00
-      !    IF( rpou(ji,jj,1) < 1._wp )   bmpu(ji,jj, 1:jpkm1) = rn_fsp
-      !    IF( rpov(ji,jj,1) < 1._wp )   bmpv(ji,jj, 1:jpkm1) = rn_fsp
       ! END_2D
       CALL lbc_lnk_multi( 'dommsk', bmpu,  'U', 1._wp, bmpv  , 'V', 1._wp, kfillmode=jpfillcopy )
 #endif
@@ -855,52 +751,12 @@ CONTAINS
           !  tanh penalisation (T point) coast = middle of rpo
           ! ----------------------------------------
           z1x =    tanh( (glamt(ji,jj) - 0._wp       )/(rn_cnp * z1d * 0.25_wp) ) +       &
-            &  - tanh( (glamt(ji,jj) - 2000000._wp )/(rn_cnp * z1d * 0.25_wp) )
+              &  - tanh( (glamt(ji,jj) - 2000000._wp )/(rn_cnp * z1d * 0.25_wp) )
           z1x = z1x * 0.5_wp
           !
           z1y =    tanh( (gphit(ji,jj) - 0._wp       )/(rn_cnp * z1d * 0.25_wp) ) +       &
-            &  - tanh( (gphit(ji,jj) - 2000000._wp )/(rn_cnp * z1d * 0.25_wp) )
+              &  - tanh( (gphit(ji,jj) - 2000000._wp )/(rn_cnp * z1d * 0.25_wp) )
           z1y = z1y * 0.5_wp
-          !
-          !  linear penalisation (speed points) coast = middle of porosity
-          ! -------------------------------------------------------------
-          !
-          ! z1x1 =  (1._wp - rn_abp)*(glamt(ji,jj) -       0._wp - (rn_cnp*ze1/4._wp))/(rn_cnp * z1d) + 0.5_wp*(1._wp + rn_abp)
-          ! z1x1 = MAX(MIN(z1x1,1._wp), rn_abp)
-          ! z1x2 = -(1._wp - rn_abp)*(glamt(ji,jj) - 2000000._wp + (rn_cnp*ze1/4._wp))/(rn_cnp * z1d) + 0.5_wp*(1._wp + rn_abp)
-          ! z1x2 = MAX(MIN(z1x2,1._wp), rn_abp)
-          ! z1x  = MIN(z1x1,z1x2)
-          ! !
-          ! z1y1 =  (1._wp - rn_abp)*(gphit(ji,jj) -       0._wp - (rn_cnp*ze1/4._wp))/(rn_cnp * z1d) + 0.5_wp*(1._wp + rn_abp)
-          ! z1y1 = MAX(MIN(z1y1,1._wp), rn_abp)
-          ! z1y2 = -(1._wp - rn_abp)*(gphit(ji,jj) - 2000000._wp + (rn_cnp*ze1/4._wp))/(rn_cnp * z1d) + 0.5_wp*(1._wp + rn_abp)
-          ! z1y2 = MAX(MIN(z1y2,1._wp), rn_abp)
-          ! z1y  = MIN(z1y1,z1y2)
-          !
-          !
-          ! W
-          ! WRITE(numout,*) 'dommsk : West coast bathy'
-          ! z1x1 =  (1._wp - rn_abp)*(glamt(ji,jj) -       0._wp)/(REAL(rn_cnp,wp) * z1d) + 0.5_wp*(1._wp + rn_abp)
-          ! z1x1 = MAX(MIN(z1x1,1._wp), rn_abp)
-          !
-          ! ! EW
-          ! WRITE(numout,*) 'dommsk : West-East coast penalised'
-          ! z1x1 =  (1._wp - rn_abp)*(glamt(ji,jj) -       0._wp)/(REAL(rn_cnp,wp) * z1d) + 0.5_wp*(1._wp + rn_abp)
-          ! z1x1 = MAX(MIN(z1x1,1._wp), rn_abp)
-          ! z1x2 = -(1._wp - rn_abp)*(glamt(ji,jj) - 2000000._wp)/(REAL(rn_cnp,wp) * z1d) + 0.5_wp*(1._wp + rn_abp)
-          ! z1x2 = MAX(MIN(z1x2,1._wp), rn_abp)
-          ! z1x  = MIN(z1x1,z1x2)
-          !
-          !NS
-          ! WRITE(numout,*) 'dommsk : North-South coast penalised'
-          ! z1y1 =  (1._wp - rn_abp)*(gphit(ji,jj) -       0._wp)/(REAL(rn_cnp,wp) * z1d) + 0.5_wp*(1._wp + rn_abp)
-          ! z1y1 = MAX(MIN(z1y1,1._wp), rn_abp)
-          ! z1y2 = -(1._wp - rn_abp)*(gphit(ji,jj) - 2000000._wp)/(REAL(rn_cnp,wp) * z1d) + 0.5_wp*(1._wp + rn_abp)
-          ! z1y2 = MAX(MIN(z1y2,1._wp), rn_abp)
-          ! z1y  = MIN(z1y1,z1y2)
-          !
-          !
-          !
           ! ze1 = z1x1
           ze1 = MIN(z1x,z1y)
           batht(ji,jj) = 4500._wp * ( 1 - ze1 ) + ze1 * 5000._wp
@@ -912,12 +768,8 @@ CONTAINS
       !
       DO jj = 1, jpjm1
          DO ji = 1, jpim1
-             IF (umask(ji,jj,1) == 1._wp ) THEN
-               bathu(ji,jj) = 0.5_wp  * (    batht(ji,jj  ) +    batht(ji+1,jj  )   )
-             ENDIF
-             IF (vmask(ji,jj,1) == 1._wp ) THEN
-               bathv(ji,jj) = 0.5_wp  * (    batht(ji,jj  ) +    batht(ji  ,jj+1)   )
-            ENDIF
+               bathu(ji,jj) = 0.5_wp  * ( batht(ji,jj) + batht(ji+1,jj  ) )
+               bathv(ji,jj) = 0.5_wp  * ( batht(ji,jj) + batht(ji  ,jj+1) )
         END DO
      END DO
       !

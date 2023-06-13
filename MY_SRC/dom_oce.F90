@@ -175,7 +175,7 @@ MODULE dom_oce
 #endif
 !!st2
 
-# if defined key_bath
+# if defined key_bvp_bath
  !! bathymetry field
  !! ------------
  REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:)     ::   batht             !: bathymetry     [-]
@@ -297,7 +297,7 @@ CONTAINS
             &     gphit0(jpi,jpj) ,     &
             &     k_top0(jpi,jpj) , STAT=ierr(ii) )
          !
-#if defined key_bath
+#if defined key_bvp_bath
     ALLOCATE( batht(jpi,jpj), bathu(jpi,jpj), bathv(jpi,jpj), STAT=ierr(ii) )
 #endif
          !

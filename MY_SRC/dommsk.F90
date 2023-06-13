@@ -718,10 +718,10 @@ CONTAINS
       WRITE(numout,*) 'dommsk : impermeability bmp (sigma) used nn_fsp=',nn_fsp
       SELECT CASE( nn_fsp )           ! == layer drag formulation        
       CASE ( 0 )
-        WHERE(rpou(:,:,:) <= 0.5_wp)
+        WHERE(rpou(:,:,:) <= 0.51_wp)
           bmpu  (:,:,:) = rn_fsp             ! used on V points
         END WHERE
-        WHERE(rpov(:,:,:) <= 0.5_wp)
+        WHERE(rpov(:,:,:) <= 0.51_wp)
           bmpv  (:,:,:) = rn_fsp             ! used on U points
         END WHERE
       CASE ( 1 )

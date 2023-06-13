@@ -100,7 +100,7 @@ CONTAINS
          &                 ln_bnd_refine, nn_bnd, rn_bnd_ref,      &   ! refine at north boundary
          &                 rn_bnd_len, rn_bnd_eqi, nn_bnd_ntr,     &
          &                 rn_f0 ,rn_beta, rn_tau,                 &   ! coriolis parameter, wind
-         &                 rn_modified_grav, rn_rfr, nn_rfr,       &   ! reduced gravity, friction
+         &                 rn_modified_grav, rn_rfr,       &   ! reduced gravity, friction
          &                 ln_hldc, rn_hldc, ln_hdiv_AD,           &   ! layer width diffusion, AD continuity
          &                 ln_mir_lapldf, ln_mir_ldf, ln_mir_adv,  &   ! mirror condition
          &                 ln_mir_coriolis, ln_mir_h,              &   !

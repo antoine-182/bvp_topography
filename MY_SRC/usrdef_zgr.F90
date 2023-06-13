@@ -194,7 +194,7 @@ CONTAINS
       !
       CALL lbc_lnk( 'usrdef_zgr', z2d, 'T', 1. )           ! set surrounding land to zero (here jperio=0 ==>> closed)
       !
-# if defined key_bvp_bath && defined key_bvp
+# if defined key_bvp_bath || defined key_bvp
       WRITE(numout,*) 'usrdef_zgr : (bath or bvp) mask enlarged of nn_gc'
       IF ( lwp ) WRITE(numout,*) 'usrdef_zgr : when nn_gc!=0, the basin is widened on each side of nn_gc (rn_cnp/2<nn_gc)     '
       ze1 = REAL(nn_gc,wp) * ( rn_dx / REAL(nn_AM98, wp) )      ! [m] gridspacing used

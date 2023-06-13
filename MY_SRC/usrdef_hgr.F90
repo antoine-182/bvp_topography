@@ -169,16 +169,6 @@ CONTAINS
               pphit0(ji,jj) = + zim05 * ze0 * zsin_theta + zjm05 * ze0 * zcos_theta - zphi0
             END DO
          END DO
-         !
-         !! False ktop - for the corner (especially for the lonely corners)
-         !ze0 =  rn_dx / 4._wp                   ! [m] gridspacing used -10%
-         ! zex = ze0 * COS( rn_theta * rad) ; zey = ze0 * COS( rn_theta * rad)
-         ! !
-         ! zylim0 =       0._wp + 0.9_wp*zey
-         ! zylim1 = 2000000._wp + 0.1_wp*zey
-         ! zxlim0 =       0._wp + 0.9_wp*zex
-         ! zxlim1 = 2000000._wp + 0.1_wp*zex
-         ! !
          ! for limit
          zylim0 =       0._wp - 0.1_wp * ze0
          zylim1 = 2000000._wp + 0.1_wp * ze0

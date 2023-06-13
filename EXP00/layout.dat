@@ -1,0 +1,4 @@
+   jpnij   jpimax  jpjmax    jpk  jpiglo  jpjglo ( local:    narea     jpi     jpj )
+       1      88     105       2      88     105 ( local:        1      88     105 )
+nproc nlci nlcj nldi nldj nlei nlej nimp njmp nono noso nowe noea nbondi nbondj 
+    0   88  105    1    1   88  105    1    1   -1   -1   -1   -1      2      2

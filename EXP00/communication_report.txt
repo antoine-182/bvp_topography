@@ -1,0 +1,25 @@
+  
+  ------------------------------------------------------------
+  Communication pattern report (second oce+sbc+top time step):
+  ------------------------------------------------------------
+  
+ Exchanged halos :   15
+ 3D Exchanged halos :   2
+ Multi arrays exchanged halos :   2
+   from which 3D :   1
+ Array max size :      73920
+  
+  lbc_lnk called
+ -    1 times by subroutine usrdef_sbc
+ -    1 times by subroutine divhor
+ -    7 times by subroutine domvvl
+ -    1 times by subroutine stp
+ -    5 times by subroutine diawri
+  
+ Global communications :    1
+ -    1 times by subroutine stpctl
+  
+  No MPI delayed global communication 
+  
+  -----------------------------------------------
+  

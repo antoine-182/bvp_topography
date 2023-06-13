@@ -1,0 +1,819 @@
+ 
+    CNRS - NERC - Met OFFICE - MERCATOR-ocean - CMCC
+                        NEMO team
+             Ocean General Circulation Model
+                 NEMO version 4.0  (2019) 
+ 
+            ._      ._      ._      ._      ._    
+        _.-._)`\_.-._)`\_.-._)`\_.-._)`\_.-._)`\_ 
+ 
+            o         _,           _,             
+             o      .' (        .-' /             
+            o     _/..._'.    .'   /              
+       (    o .-'`      ` '-./  _.'               
+        )    ( o)           ;= <_         (       
+       (      '-.,\\__ __.-;`\   '.        )      
+        )  )       \) |`\ \)  '.   \      (   (   
+       (  (           \_/       '-._\      )   )  
+        )  ) jgs                     `    (   (   
+      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 
+ 
+
+AAAAAAAA
+
+    
+ usr_def_nam  : read the user defined namelist (namusr_def) in namelist_cfg
+ ~~~~~~~~~~~ 
+    Namelist namusr_def : AM98 case
+                                    domain size       rn_domsiz   = 
+   2000000.00000000      m
+                                    gridspacing           rn_dx   = 
+   100000.000000000      m
+       inverse resolution & implied domain size         nn_AM98   =            4
+                            implied gridspacing           rn_dx   = 
+   100000.000000000      m
+                           number of ghostcells           nn_gc   =            2
+    
+    
+                               wind stress               rn_tau   = 
+  0.200000000000000      N/m2
+                    linear friction chosen               rn_rfr   = 
+  1.000000000000000E-007 1/s
+                    1°/4 staircase shape             ln_obstacle  =  F
+                    type of stress tensor      nn_dynldf_lap_typ  =            1
+                    Alternative Direction hdiv        ln_hdiv_AD  =  F
+                Diffusive fluxes changed on steps  nn_dynldf_flx  =            0
+                North refine                       ln_bnd_refine  =  T
+                                                          nn_bnd  =            0
+                                                      rn_bnd_ref  = 
+   4.00000000000000     
+                                                      rn_bnd_len  = 
+   100.000000000000     
+                                                      rn_bnd_eqi  = 
+   10.0000000000000     
+                                                      nn_bnd_ntr  =           15
+                    Layer with diffusion                 ln_hldc  =  F
+                    diffusion parameter                  rn_hldc  = 
+  1.000000000000000E-002 [m2/s]
+                     rotation angle chosen              rn_theta  = 
+  0.000000000000000E+000 deg
+                     modified gravity           rn_modified_grav  = 
+  2.000000000000000E-002 m2/s
+       number of model levels                              jpkglo =            2
+    
+    Lateral b.c. of the global domain set to closed        jperio =            0
+    Namelist nammpp
+       jpni and jpnj will be calculated automatically
+       avoid use of mpi_allgather at the north fold  ln_nnogather =  T
+ mpp_init:
+ ~~~~~~~~ 
+ 
+    ==> you use the best mpi decomposition
+ 
+   Number of mpi processes:     1
+   Number of ocean subdomains =     1
+   Number of suppressed land subdomains =     0
+ 
+ 
+ MPI Message Passing MPI - domain lay out over processors
+ 
+    defines mpp subdomains
+       jpni =            1
+       jpnj =            1
+ 
+       sum ilci(i,1) =           88  jpiglo =           88
+       sum ilcj(1,j) =          105  jpjglo =          105
+ 
+           ****************
+           *              *   
+         1 *   88  x105   *   
+           *          0   *        
+           *              *   
+           ****************
+                   1             
+ 
+    resulting internal parameters : 
+       nproc  =            0
+       nowe   =           -1    noea  =            -1
+       nono   =           -1    noso  =            -1
+       nbondi =            2
+       nbondj =            2
+       npolj  =            0
+     l_Iperio =  F
+     l_Jperio =  F
+       nlci   =           88
+       nlcj   =          105
+       nimpp  =            1
+       njmpp  =            1
+       nreci  =            2
+       nrecj  =            2
+       nn_hls =            1
+ 
+ mpp_init_ioipsl :   iloc  =           88         105
+ ~~~~~~~~~~~~~~~     iabsf =            1           1
+                     ihals =            0           0
+                     ihale =            0           0
+ 
+ nemo_ctl: Control prints
+ ~~~~~~~~
+    Namelist namctl
+                               sn_cfctl%l_glochk  =  F
+                               sn_cfctl%l_allon   =  F
+        finer control over o/p sn_cfctl%l_config  =  T
+                               sn_cfctl%l_runstat =  T
+                               sn_cfctl%l_trcstat =  F
+                               sn_cfctl%l_oceout  =  F
+                               sn_cfctl%l_layout  =  F
+                               sn_cfctl%l_prtctl  =  F
+                               sn_cfctl%l_prttrc  =  F
+                               sn_cfctl%l_oasout  =  F
+                               sn_cfctl%procmin   =            0
+                               sn_cfctl%procmax   =      1000000
+                               sn_cfctl%procincr  =            1
+                               sn_cfctl%ptimincr  =            1
+       level of print                  nn_print   =            0
+       Start i indice for SUM control  nn_ictls   =            0
+       End i indice for SUM control    nn_ictle   =            0
+       Start j indice for SUM control  nn_jctls   =            0
+       End j indice for SUM control    nn_jctle   =            0
+       number of proc. following i     nn_isplt   =            1
+       number of proc. following j     nn_jsplt   =            1
+       timing by routine               ln_timing  =  F
+       CFL diagnostics                 ln_diacfl  =  F
+ 
+    Namelist namcfg
+       read domain configuration file                ln_read_cfg      =  F
+          filename to be read                           cn_domcfg     = 
+ domain_cfg
+          keep closed seas in the domain (if exist)     ln_closea     =  F
+       create a configuration definition file        ln_write_cfg     =  F
+          filename to be written                        cn_domcfg_out = 
+ domain_cfg_out
+       use file attribute if exists as i/p j-start   ln_use_jattr     =  F
+ 
+ phy_cst : initialization of ocean parameters and constants
+ ~~~~~~~
+       mathematical constant                 rpi =    3.14159265358979     
+       day                                rday   =    86400.0000000000       s
+       sideral year                       rsiyea =    31558149.0101107       s
+       sideral day                        rsiday =    86164.0996559118       s
+       omega                              omega  =   7.292115083046062E-005  s^-
+ 1
+ 
+       nb of months per year               raamo =    12.0000000000000      
+  months
+       nb of hours per day                 rjjhh =    24.0000000000000      
+  hours
+       nb of minutes per hour              rhhmm =    60.0000000000000       mn
+       nb of seconds per minute            rmmss =    60.0000000000000       s
+ 
+       earth radius                         ra   =    6371229.00000000       m
+       gravity                              grav =   2.000000000000000E-002 
+  m/s^2
+ 
+       freezing point of water              rt0  =    273.150000000000       K
+ 
+    reference density and heat capacity now defined in eosbn2.f90
+ 
+       thermal conductivity of pure ice          =    2.03439600000000      
+  J/s/m/K
+       thermal conductivity of snow is defined in a namelist 
+       fresh ice specific heat                   =    2067.00000000000      
+  J/kg/K
+       latent heat of fusion of fresh ice / snow =    334000.000000000       J/k
+ g
+       latent heat of subl.  of fresh ice / snow =    2834000.00000000       J/k
+ g
+       density of sea ice                        =    917.000000000000      
+  kg/m^3
+       density of snow                           =    330.000000000000      
+  kg/m^3
+       density of freshwater (in melt ponds)     =    1000.00000000000      
+  kg/m^3
+       salinity of ice (for pisces)              =    6.00000000000000       psu
+       salinity of sea (for pisces and isf)      =    34.7000000000000       psu
+       latent heat of evaporation (water)        =    2500000.00000000      
+  J/m^3
+       von Karman constant                       =   0.400000000000000     
+       Stefan-Boltzmann constant                 =   5.670000000000000E-008 
+  J/s/m^2/K^4
+ 
+       conversion: degre ==> radian          rad =   1.745329251994330E-002
+ 
+       smallest real computer value       rsmall =   1.110223024625157E-016
+ 
+ dom_init : domain initialization
+ ~~~~~~~~
+    Domain info
+       dimension of model:
+              Local domain      Global domain       Data domain 
+               jpi     :      88   jpiglo  :      88
+               jpj     :     105   jpjglo  :     105
+               jpk     :       2   jpkglo  :       2
+               jpij    :    9240
+       mpp local domain info (mpp):
+               jpni    :            1    nn_hls  :            1
+               jpnj    :            1    nn_hls  :            1
+               jpnij   :            1
+       lateral boundary of the Global domain : jperio  =            0
+          (i.e. closed)
+       Ocean model configuration used:
+          cn_cfg = AM98   nn_cfg =            4
+ 
+ dom_glo : domain: global <<==>> local 
+ ~~~~~~~ 
+    global domain:   jpiglo =           88  jpjglo =          105  jpkglo = 
+           2
+    local  domain:   jpi    =           88  jpj    =          105  jpk    = 
+           2
+ 
+    conversion from local to global domain indices (and vise versa) done
+ 
+ dom_nam : domain initialization through namelist read
+ ~~~~~~~ 
+    Namelist : namrun   ---   run parameters
+       Assimilation cycle              nn_no           =            0
+       experiment name for output      cn_exp          = AM98
+       file prefix restart input       cn_ocerst_in    = restart
+       restart input directory         cn_ocerst_indir = .
+       file prefix restart output      cn_ocerst_out   = restart
+       restart output directory        cn_ocerst_outdir= .
+       restart logical                 ln_rstart       =  F
+       start with forward time step    ln_1st_euler    =  F
+       control of time step            nn_rstctl       =            0
+       number of the first time step   nn_it000        =            1
+       number of the last time step    nn_itend        =      1728000
+       initial calendar date aammjj    nn_date0        =        10101
+       initial time of day in hhmm     nn_time0        =            0
+       leap year calendar (0/1)        nn_leapy        =           30
+       initial state output            nn_istate       =            0
+       frequency of restart file       nn_stock        =            0
+       mask land points                ln_mskland      =  F
+       additional CF standard metadata ln_cfmeta       =  F
+       overwrite an existing file      ln_clobber      =  T
+       NetCDF chunksize (bytes)        nn_chunksz      =            0
+       READ restart for a single file using XIOS ln_xios_read = F
+       Write restart using XIOS        nn_wxios   =            0
+ 
+    ==>>>   Start from rest (ln_rstart=F)
+            an Euler initial time step is used : l_1st_euler is forced to .true.
+  
+ 
+  ===>>> : W A R N I N G
+ 
+          ===============
+ 
+  nn_stock =            0  it is forced to      1728000
+ 
+ 
+    ==>>>   The IOIPSL calendar is "360d", i.e. 360 days in a year
+ 
+    Namelist : namdom   ---   space & time domain
+       linear free surface (=T)                ln_linssh   =  F
+       create mesh/mask file                   ln_meshmask =  T
+       ocean time step                         rn_Dt       = 
+   450.000000000000     
+       asselin time filter parameter           rn_atfp     = 
+  0.100000000000000     
+       online coarsening of dynamical fields   ln_crs      =  F
+ 
+ dom_hgr : define the horizontal mesh from ithe following par_oce parameters 
+ ~~~~~~~   
+    namcfg : read (=T) or user defined (=F) configuration    ln_read_cfg  =  F
+ 
+           User defined horizontal mesh (usr_def_hgr)
+ 
+ usr_def_hgr : AM98 configuration (beta-plane with rotated regular grid-spacing)
+ ~~~~~~~~~~~
+                            origin position    zlam0   = 
+   100.000000000000       km
+                            origin position    zphi0   = 
+   100.000000000000       km
+ North boundary locally refine
+ zelrefine =    1650000.00000000     
+ COS( ztm *  0.000000000000000E+000  )=   25000.0000000000     
+ COS( ztm *   1.00000000000000       )=   24795.1337568794     
+ COS( ztm *   2.00000000000000       )=   24189.4886653994     
+ COS( ztm *   3.00000000000000       )=   23209.5343222651     
+ COS( ztm *   4.00000000000000       )=   21898.0994346143     
+ COS( ztm *   5.00000000000000       )=   20312.5000000000     
+ COS( ztm *   6.00000000000000       )=   18522.0343222651     
+ COS( ztm *   7.00000000000000       )=   16604.9543431343     
+ COS( ztm *   8.00000000000000       )=   14645.0456568658     
+ COS( ztm *   9.00000000000000       )=   12727.9656777349     
+ COS( ztm *   10.0000000000000       )=   10937.5000000000     
+ COS( ztm *   11.0000000000000       )=   9351.90056538571     
+ COS( ztm *   12.0000000000000       )=   8040.46567773487     
+ COS( ztm *   13.0000000000000       )=   7060.51133460062     
+ COS( ztm *   14.0000000000000       )=   6454.86624312057     
+ COS( ztm *   15.0000000000000       )=   6250.00000000000     
+                            beta-plane used. f0   =   5.000000000000000E-005  1/
+ s
+                            beta-plane used. beta =   2.000000000000000E-011 
+  1/(s.m)
+           Coriolis parameter have been set in usr_def_hgr routine
+           u- & v-surfaces calculated as e1 e2 product
+ 
+ dom_zgr : vertical coordinate
+ ~~~~~~~
+ 
+           User defined vertical mesh (usr_def_zgr)
+ 
+ usr_def_zgr : AM98 configuration (z-coordinate closed flat box ocean without ca
+ vities)
+ ~~~~~~~~~~~
+ 
+     zgr_z   : Reference vertical z-coordinates 
+     ~~~~~~~
+ 
+               Reference 1D z-coordinate depth and scale factors:
+          level  gdept_1d  gdepw_1d  e3t_1d   e3w_1d  
+             1   250.00     0.00   500.00   500.00
+             2   750.00   500.00   500.00   500.00
+ 
+     zgr_top_bot : defines the top and bottom wet ocean levels.
+     ~~~~~~~~~~~
+        AM98 case : closed flat box ocean without ocean cavities
+ usrdef_zgr : Solved at 1°/           4  resolution (ln_obstacle=F)
+ 
+    Type of vertical coordinate (read in domain_cfg
+  file or set in userdef_nam) :
+       z-coordinate - full steps      ln_zco    =  F
+       z-coordinate - partial steps   ln_zps    =  F
+       s- or hybrid z-s-coordinate    ln_sco    =  T
+       ice shelf cavities             ln_isfcav =  F
+ 
+     zgr_top_bot : ocean top and bottom k-index of T-, U-, V- and W-levels 
+     ~~~~~~~~~~~
+ 
+ dommsk : ocean mask 
+ ~~~~~~
+    Namelist namlbc
+       lateral momentum boundary cond.    rn_shlat  =   0.000000000000000E+000
+       consistency with analytical form   ln_vorlat =  F
+ 
+    ==>>>   ocean lateral  free-slip
+ 
+ usr_def_fmask : NO alteration of fmask in specific straits 
+ ~~~~~~~~~~~~~
+ 
+ dom_vvl_init : Variable volume activated
+ ~~~~~~~~~~~~
+ 
+ dom_vvl_ctl : choice/control of the variable vertical coordinate
+ ~~~~~~~~~~~
+    Namelist nam_vvl : chose a vertical coordinate
+       zstar                      ln_vvl_zstar   =  T
+       ztilde                     ln_vvl_ztilde  =  F
+       layer                      ln_vvl_layer   =  F
+       ztilde as zstar   ln_vvl_ztilde_as_zstar  =  F
+       ztilde near the equator    ln_vvl_zstar_at_eqtor  =  F
+       !
+       thickness diffusion coefficient                      rn_ahe3      = 
+  0.000000000000000E+000
+       maximum e3t deformation fractional change            rn_zdef_max  = 
+  0.900000000000000     
+       z-tilde to zstar restoration timescale (days)        rn_rst_e3t   = 
+   30.0000000000000     
+       z-tilde cutoff frequency of low-pass filter (days)   rn_lf_cutoff = 
+   5.00000000000000     
+          debug prints flag                                 ln_vvl_dbg   =  F
+ 
+       ==>>>   zstar vertical coordinate is used
+ 
+ dom_wri : create NetCDF mesh and mask information file(s)
+ ~~~~~~~
+                     iom_nf90_open ~~~ create new file: mesh_mask.nc in WRITE mo
+ de
+                    ---> mesh_mask.nc OK
+           iom_nf90_rp0123d, file: mesh_mask.nc, var: jpiglo define dimension va
+ riables done
+           iom_nf90_rp0123d, file: mesh_mask.nc, var: jpiglo defined ok
+           iom_nf90_rp0123d, file: mesh_mask.nc, var: jpiglo written ok
+           iom_nf90_rp0123d, file: mesh_mask.nc, var: jpjglo defined ok
+           iom_nf90_rp0123d, file: mesh_mask.nc, var: jpjglo written ok
+           iom_nf90_rp0123d, file: mesh_mask.nc, var: jpkglo defined ok
+           iom_nf90_rp0123d, file: mesh_mask.nc, var: jpkglo written ok
+           iom_nf90_rp0123d, file: mesh_mask.nc, var: jperio defined ok
+           iom_nf90_rp0123d, file: mesh_mask.nc, var: jperio written ok
+           iom_nf90_rp0123d, file: mesh_mask.nc, var: ln_zco defined ok
+           iom_nf90_rp0123d, file: mesh_mask.nc, var: ln_zco written ok
+           iom_nf90_rp0123d, file: mesh_mask.nc, var: ln_zps defined ok
+           iom_nf90_rp0123d, file: mesh_mask.nc, var: ln_zps written ok
+           iom_nf90_rp0123d, file: mesh_mask.nc, var: ln_sco defined ok
+           iom_nf90_rp0123d, file: mesh_mask.nc, var: ln_sco written ok
+           iom_nf90_rp0123d, file: mesh_mask.nc, var: ln_isfcav defined ok
+           iom_nf90_rp0123d, file: mesh_mask.nc, var: ln_isfcav written ok
+           iom_nf90_rp0123d, file: mesh_mask.nc, var: tmask defined ok
+           iom_nf90_rp0123d, file: mesh_mask.nc, var: tmask write dimension vari
+ ables done
+           iom_nf90_rp0123d, file: mesh_mask.nc, var: tmask written ok
+           iom_nf90_rp0123d, file: mesh_mask.nc, var: umask defined ok
+           iom_nf90_rp0123d, file: mesh_mask.nc, var: umask written ok
+           iom_nf90_rp0123d, file: mesh_mask.nc, var: vmask defined ok
+           iom_nf90_rp0123d, file: mesh_mask.nc, var: vmask written ok
+           iom_nf90_rp0123d, file: mesh_mask.nc, var: fmask defined ok
+           iom_nf90_rp0123d, file: mesh_mask.nc, var: fmask written ok
+           iom_nf90_rp0123d, file: mesh_mask.nc, var: tmaskutil defined ok
+           iom_nf90_rp0123d, file: mesh_mask.nc, var: tmaskutil written ok
+           iom_nf90_rp0123d, file: mesh_mask.nc, var: umaskutil defined ok
+           iom_nf90_rp0123d, file: mesh_mask.nc, var: umaskutil written ok
+           iom_nf90_rp0123d, file: mesh_mask.nc, var: vmaskutil defined ok
+           iom_nf90_rp0123d, file: mesh_mask.nc, var: vmaskutil written ok
+           iom_nf90_rp0123d, file: mesh_mask.nc, var: glamt defined ok
+           iom_nf90_rp0123d, file: mesh_mask.nc, var: glamt written ok
+           iom_nf90_rp0123d, file: mesh_mask.nc, var: glamu defined ok
+           iom_nf90_rp0123d, file: mesh_mask.nc, var: glamu written ok
+           iom_nf90_rp0123d, file: mesh_mask.nc, var: glamv defined ok
+           iom_nf90_rp0123d, file: mesh_mask.nc, var: glamv written ok
+           iom_nf90_rp0123d, file: mesh_mask.nc, var: glamf defined ok
+           iom_nf90_rp0123d, file: mesh_mask.nc, var: glamf written ok
+           iom_nf90_rp0123d, file: mesh_mask.nc, var: gphit defined ok
+           iom_nf90_rp0123d, file: mesh_mask.nc, var: gphit written ok
+           iom_nf90_rp0123d, file: mesh_mask.nc, var: gphiu defined ok
+           iom_nf90_rp0123d, file: mesh_mask.nc, var: gphiu written ok
+           iom_nf90_rp0123d, file: mesh_mask.nc, var: gphiv defined ok
+           iom_nf90_rp0123d, file: mesh_mask.nc, var: gphiv written ok
+           iom_nf90_rp0123d, file: mesh_mask.nc, var: gphif defined ok
+           iom_nf90_rp0123d, file: mesh_mask.nc, var: gphif written ok
+           iom_nf90_rp0123d, file: mesh_mask.nc, var: e1t defined ok
+           iom_nf90_rp0123d, file: mesh_mask.nc, var: e1t written ok
+           iom_nf90_rp0123d, file: mesh_mask.nc, var: e1u defined ok
+           iom_nf90_rp0123d, file: mesh_mask.nc, var: e1u written ok
+           iom_nf90_rp0123d, file: mesh_mask.nc, var: e1v defined ok
+           iom_nf90_rp0123d, file: mesh_mask.nc, var: e1v written ok
+           iom_nf90_rp0123d, file: mesh_mask.nc, var: e1f defined ok
+           iom_nf90_rp0123d, file: mesh_mask.nc, var: e1f written ok
+           iom_nf90_rp0123d, file: mesh_mask.nc, var: e2t defined ok
+           iom_nf90_rp0123d, file: mesh_mask.nc, var: e2t written ok
+           iom_nf90_rp0123d, file: mesh_mask.nc, var: e2u defined ok
+           iom_nf90_rp0123d, file: mesh_mask.nc, var: e2u written ok
+           iom_nf90_rp0123d, file: mesh_mask.nc, var: e2v defined ok
+           iom_nf90_rp0123d, file: mesh_mask.nc, var: e2v written ok
+           iom_nf90_rp0123d, file: mesh_mask.nc, var: e2f defined ok
+           iom_nf90_rp0123d, file: mesh_mask.nc, var: e2f written ok
+           iom_nf90_rp0123d, file: mesh_mask.nc, var: ff_f defined ok
+           iom_nf90_rp0123d, file: mesh_mask.nc, var: ff_f written ok
+           iom_nf90_rp0123d, file: mesh_mask.nc, var: ff_t defined ok
+           iom_nf90_rp0123d, file: mesh_mask.nc, var: ff_t written ok
+           iom_nf90_rp0123d, file: mesh_mask.nc, var: mbathy defined ok
+           iom_nf90_rp0123d, file: mesh_mask.nc, var: mbathy written ok
+           iom_nf90_rp0123d, file: mesh_mask.nc, var: misf defined ok
+           iom_nf90_rp0123d, file: mesh_mask.nc, var: misf written ok
+           iom_nf90_rp0123d, file: mesh_mask.nc, var: e3t_1d defined ok
+           iom_nf90_rp0123d, file: mesh_mask.nc, var: e3t_1d written ok
+           iom_nf90_rp0123d, file: mesh_mask.nc, var: e3w_1d defined ok
+           iom_nf90_rp0123d, file: mesh_mask.nc, var: e3w_1d written ok
+           iom_nf90_rp0123d, file: mesh_mask.nc, var: e3t_0 defined ok
+           iom_nf90_rp0123d, file: mesh_mask.nc, var: e3t_0 written ok
+           iom_nf90_rp0123d, file: mesh_mask.nc, var: e3u_0 defined ok
+           iom_nf90_rp0123d, file: mesh_mask.nc, var: e3u_0 written ok
+           iom_nf90_rp0123d, file: mesh_mask.nc, var: e3v_0 defined ok
+           iom_nf90_rp0123d, file: mesh_mask.nc, var: e3v_0 written ok
+           iom_nf90_rp0123d, file: mesh_mask.nc, var: e3f_0 defined ok
+           iom_nf90_rp0123d, file: mesh_mask.nc, var: e3f_0 written ok
+           iom_nf90_rp0123d, file: mesh_mask.nc, var: e3w_0 defined ok
+           iom_nf90_rp0123d, file: mesh_mask.nc, var: e3w_0 written ok
+           iom_nf90_rp0123d, file: mesh_mask.nc, var: e3uw_0 defined ok
+           iom_nf90_rp0123d, file: mesh_mask.nc, var: e3uw_0 written ok
+           iom_nf90_rp0123d, file: mesh_mask.nc, var: e3vw_0 defined ok
+           iom_nf90_rp0123d, file: mesh_mask.nc, var: e3vw_0 written ok
+           iom_nf90_rp0123d, file: mesh_mask.nc, var: gdept_1d defined ok
+           iom_nf90_rp0123d, file: mesh_mask.nc, var: gdept_1d written ok
+           iom_nf90_rp0123d, file: mesh_mask.nc, var: gdepw_1d defined ok
+           iom_nf90_rp0123d, file: mesh_mask.nc, var: gdepw_1d written ok
+           iom_nf90_rp0123d, file: mesh_mask.nc, var: gdept_0 defined ok
+           iom_nf90_rp0123d, file: mesh_mask.nc, var: gdept_0 written ok
+           iom_nf90_rp0123d, file: mesh_mask.nc, var: gdepw_0 defined ok
+           iom_nf90_rp0123d, file: mesh_mask.nc, var: gdepw_0 written ok
+ 
+ dom_stiff : maximum grid stiffness ratio:   0.000000000000000E+000
+ ~~~~~~~~~
+           iom_nf90_rp0123d, file: mesh_mask.nc, var: stiffness defined ok
+           iom_nf90_rp0123d, file: mesh_mask.nc, var: stiffness written ok
+                     iom_close ~~~ close file: mesh_mask.nc ok
+ 
+ dom_ctl : extrema of the masked scale factors
+ ~~~~~~~
+              e1t maxi:   25000.00 at i =     5 j=     5
+              e1t mini:   25000.00 at i =     5 j=     5
+              e2t maxi:   25000.00 at i =     5 j=     5
+              e2t mini:    6250.00 at i =     5 j=    86
+ 
+ dom_init :   ==>>>   END of domain initialization
+ ~~~~~~~~
+ 
+ 
+ istate_init : Initialization of the dynamics and tracers
+ ~~~~~~~~~~~
+ 
+ dta_tsd_init : Temperature & Salinity data 
+ ~~~~~~~~~~~~ 
+    Namelist namtsd
+       Initialisation of ocean T & S with T &S input data   ln_tsd_init =  F
+       damping of ocean T & S toward T &S input data        ln_tsd_dmp  =  F
+ 
+ 
+    ===>>   T & S data not used
+  *** Info used values : 
+    date ndastp                                      :        10100
+    number of elapsed days since the begining of run :   0.000000000000000E+000
+    nn_time0                                         :            0
+ 
+ =======>> 1/2 time step before the start of the run DATE Y/M/D =      0/12/30  nsec_day:   86175  nsec_monday:   86175                     nsec_month: 2591775  nsec_year:31103775
+======>> time-step =       1      New day, DATE Y/M/D = 0001/01/01      nday_year = 001
+         nsec_year =      225   nsec_month =     225   nsec_day =   225
+   nsec_monday =    86625
+ 
+ usr_def_istate : analytical definition of initial state 
+ ~~~~~~~~~~~~~~   Ocean at rest, with an horizontally uniform T and S profiles
+ end istate
+ 
+ tide_init : tidal components not used (ln_tide = F)
+ ~~~~~~~~~ 
+ 
+ sbc_init : surface boundary condition setting
+ ~~~~~~~~ 
+    Namelist namsbc (partly overwritten with CPP key setting)
+       frequency update of sbc (and ice)             nn_fsbc       = 
+           1
+       Type of air-sea fluxes : 
+          user defined formulation                   ln_usr        =  T
+          flux         formulation                   ln_flx        =  F
+          bulk         formulation                   ln_blk        =  F
+          ABL          formulation                   ln_abl        =  F
+       Type of coupling (Ocean/Ice/Atmosphere) : 
+          ocean-atmosphere coupled formulation       ln_cpl        =  F
+          mixed forced-coupled     formulation       ln_mixcpl     =  F
+          OASIS coupling (with atm or sas)           lk_oasis      =  F
+          components of your executable              nn_components = 
+           0
+       Sea-ice : 
+          ice management in the sbc (=0/1/2/3)       nn_ice        = 
+           0
+          ice embedded into ocean                    ln_ice_embd   =  F
+       Misc. options of sbc : 
+          Light penetration in temperature Eq.       ln_traqsr     =  F
+             daily mean to diurnal cycle qsr            ln_dm2dc   =  F
+          Sea Surface Restoring on SST and/or SSS    ln_ssr        =  F
+          FreshWater Budget control  (=0/1/2)        nn_fwb        = 
+           0
+          Patm gradient added in ocean & ice Eqs.    ln_apr_dyn    =  F
+          runoff / runoff mouths                     ln_rnf        =  F
+          nb of iterations if land-sea-mask applied  nn_lsm        = 
+           0
+          surface wave                               ln_wave       =  F
+                Stokes drift corr. to vert. velocity ln_sdw        =  F
+                   vertical parametrization          nn_sdrift     = 
+           0
+                wave modified ocean stress           ln_tauwoc     =  F
+                wave modified ocean stress component ln_tauw       =  F
+                Stokes coriolis term                 ln_stcor      =  F
+                neutral drag coefficient (CORE,NCAR) ln_cdgw       =  F
+ 
+    ==>>>   NEMO configured as a single executable (i.e. including both OPA and 
+ Surface module)
+ 
+    ==>>>   user defined forcing formulation
+ 
+ sbc_ssm_init : sea surface mean fields, nn_fsbc=1 : instantaneous values
+ ~~~~~~~~~~~ 
+    default initialisation of ss._m arrays
+ 
+ ldf_dyn : lateral momentum physics
+ ~~~~~~~
+    Namelist namdyn_ldf : set lateral mixing parameters
+       type :
+          no explicit diffusion                ln_dynldf_OFF =  F
+          laplacian operator                   ln_dynldf_lap =  T
+          bilaplacian operator                 ln_dynldf_blp =  F
+       direction of action :
+          iso-level                            ln_dynldf_lev =  T
+          horizontal (geopotential)            ln_dynldf_hor =  F
+          iso-neutral                          ln_dynldf_iso =  F
+       coefficients :
+          type of time-space variation         nn_ahm_ijk_t  =            0
+          lateral viscous velocity  (if cst)      rn_Uv      = 
+   2.00000000000000       m/s
+          lateral viscous length    (if cst)      rn_Lv      = 
+   500.000000000000       m
+          background viscosity (iso-lap case)     rn_ahm_b   = 
+  0.000000000000000E+000  m2/s
+       Smagorinsky settings (nn_ahm_ijk_t  = 32) :
+          Smagorinsky coefficient              rn_csmc       = 
+   3.50000000000000     
+          factor multiplier for eddy visc.
+             lower limit (default 1.0)         rn_minfac    = 
+   1.00000000000000     
+             upper limit (default 1.0)         rn_maxfac    = 
+   1.00000000000000     
+ 
+    ==>>>   iso-level laplacian operator
+ 
+    ==>>>   eddy viscosity. = constant =    500.000000000000       m2/s
+  ahmt tmasked 
+  ahmf fmasked 
+  nn_dynldf_lap_typ =            1
+  nn_dynldf_flx     =            0
+ 
+ dyn_adv_init : choice/control of the momentum advection scheme
+ ~~~~~~~~~~~~
+    Namelist namdyn_adv : chose a advection formulation & scheme for momentum
+       linear dynamics : no momentum advection          ln_dynadv_OFF  =  F
+       Vector form: 2nd order centered scheme           ln_dynadv_vec  =  T
+          with Hollingsworth scheme (=1) or not (=0)       nn_dynkeg   = 
+           0
+       flux form: 2nd order centred scheme              ln_dynadv_cen2 =  F
+                  3rd order UBS scheme                  ln_dynadv_ubs  =  F
+                  4th order centred scheme              ln_dynadv_cen4 =  F
+ 
+    ==>>>   vector form : keg + zad + vor is used
+               with Centered standard keg scheme
+ 
+ dyn_vor_init : vorticity term : read namelist and control the consistency
+ ~~~~~~~~~~~~
+    Namelist namdyn_vor : choice of the vorticity term scheme
+       enstrophy conserving scheme                    ln_dynvor_ens =  T
+       f-point energy conserving scheme               ln_dynvor_ene =  F
+       t-point energy conserving scheme               ln_dynvor_enT =  F
+       energy conserving scheme  (een using e3t)      ln_dynvor_eeT =  F
+       enstrophy and energy conserving scheme         ln_dynvor_een =  F
+          e3f = averaging /4 (=0) or /sum(tmask) (=1)    nn_een_e3f = 
+           1
+       mixed enstrophy/energy conserving scheme       ln_dynvor_mix =  F
+       masked (=T) or unmasked(=F) vorticity          ln_dynvor_msk =  T
+ 
+       change fmask value in the angles (T)           ln_vorlat =  F
+ 
+    ==>>>   vector form dynamics : total vorticity = Coriolis + relative vortici
+ ty
+ 
+    ==>>>   enstrophy conserving scheme (ENS)
+ 
+ dyn_ldf_init : Choice of the lateral diffusive operator on dynamics
+ ~~~~~~~~~~~~
+    Namelist namdyn_ldf: already read in ldfdyn module
+       see ldf_dyn_init report for lateral mixing parameters
+ 
+    ==>>>   iso-level laplacian operator
+ 
+ dyn_spg_init : choice of the surface pressure gradient scheme
+ ~~~~~~~~~~~~
+    Namelist : namdyn_spg                    
+       Explicit free surface                  ln_dynspg_exp =  T
+       Free surface with time splitting       ln_dynspg_ts  =  F
+ 
+    ==>>>   explicit free surface
+ 
+ flo_stp : call floats routine 
+ ~~~~~~~
+ 
+          Namelist floats :
+             Activate floats or not                   ln_floats    =  F
+                number of floats                      jpnfl        = 
+           1
+                number of new floats                  jpnflnewflo  = 
+           0
+                restart                               ln_rstflo    =  F
+                frequency of float output file        nn_writefl   = 
+          75
+                frequency of float restart file       nn_stockfl   = 
+        5475
+                Argo type floats                      ln_argo      =  F
+                Computation of T trajectories         ln_flork4    =  F
+                Use of ariane convention              ln_ariane    =  T
+                ascii output (T) or netcdf output (F) ln_flo_ascii =  T
+ 
+ trd_init : Momentum/Tracers trends
+ ~~~~~~~~
+    Namelist namtrd : set trends parameters
+       global domain averaged dyn & tra trends   ln_glo_trd  =  F
+       U & V trends: 3D output                   ln_dyn_trd  =  F
+       U & V trends: Mixed Layer averaged        ln_dyn_mxl  =  F
+       T & S trends: 3D output                   ln_tra_trd  =  F
+       T & S trends: Mixed Layer averaged        ln_tra_mxl  =  F
+       Kinetic   Energy trends                   ln_KE_trd   =  F
+       Potential Energy trends                   ln_PE_trd   =  F
+       Barotropic vorticity trends               ln_vor_trd  =  F
+       frequency of trends diagnostics (glo)     nn_trd      =          365
+
+AAAAAAAA
+
+
+AAAAAAAA
+
+           nit000-1 surface forcing fields set to nit000
+ 
+ ssh_nxt : after sea surface height
+ ~~~~~~~ 
+ 
+ div_hor : horizontal velocity divergence 
+ ~~~~~~~   
+ 
+ dom_vvl_sf_nxt : compute after scale factors
+ ~~~~~~~~~~~~~~
+ 
+ dyn_keg : kinetic energy gradient trend, scheme number=           0
+ ~~~~~~~
+ 
+ dyn_zad : 2nd order vertical advection scheme
+ 
+ dyn:vor_ens : vorticity term: enstrophy conserving scheme
+ ~~~~~~~~~~~
+ 
+ dyn_ldf : iso-level harmonic (laplacian) operator, pass=           1
+ ~~~~~~~ 
+                   nn_dynldf_lap_typ =            1
+    ==>>>   div-rot   laplacian
+ step : timestepping in Vect Form
+ 
+ dom_vvl_sf_update : - interpolate scale factors and compute depths for next tim
+ e step
+ ~~~~~~~~~~~~~~~~~
+ 
+ stp_ctl : time-stepping control
+ ~~~~~~~
+      file   : time.step open ok
+      unit   =           19
+      status = REPLACE
+      form   = FORMATTED
+      access = SEQUENTIAL
+ 
+      file   : run.stat open ok
+      unit   =           20
+      status = REPLACE
+      form   = FORMATTED
+      access = SEQUENTIAL
+ 
+======>> time-step =     193      New day, DATE Y/M/D = 0001/01/02      nday_year = 002
+         nsec_year =    86625   nsec_month =   86625   nsec_day =   225
+   nsec_monday =   173025
+======>> time-step =     385      New day, DATE Y/M/D = 0001/01/03      nday_year = 003
+         nsec_year =   173025   nsec_month =  173025   nsec_day =   225
+   nsec_monday =   259425
+======>> time-step =     577      New day, DATE Y/M/D = 0001/01/04      nday_year = 004
+         nsec_year =   259425   nsec_month =  259425   nsec_day =   225
+   nsec_monday =   345825
+======>> time-step =     769      New day, DATE Y/M/D = 0001/01/05      nday_year = 005
+         nsec_year =   345825   nsec_month =  345825   nsec_day =   225
+   nsec_monday =   432225
+======>> time-step =     961      New day, DATE Y/M/D = 0001/01/06      nday_year = 006
+         nsec_year =   432225   nsec_month =  432225   nsec_day =   225
+   nsec_monday =   518625
+======>> time-step =    1153      New day, DATE Y/M/D = 0001/01/07      nday_year = 007
+         nsec_year =   518625   nsec_month =  518625   nsec_day =   225
+   nsec_monday =   605025
+======>> time-step =    1345      New day, DATE Y/M/D = 0001/01/08      nday_year = 008
+         nsec_year =   605025   nsec_month =  605025   nsec_day =   225
+   nsec_monday =    86625
+======>> time-step =    1537      New day, DATE Y/M/D = 0001/01/09      nday_year = 009
+         nsec_year =   691425   nsec_month =  691425   nsec_day =   225
+   nsec_monday =   173025
+======>> time-step =    1729      New day, DATE Y/M/D = 0001/01/10      nday_year = 010
+         nsec_year =   777825   nsec_month =  777825   nsec_day =   225
+   nsec_monday =   259425
+======>> time-step =    1921      New day, DATE Y/M/D = 0001/01/11      nday_year = 011
+         nsec_year =   864225   nsec_month =  864225   nsec_day =   225
+   nsec_monday =   345825
+======>> time-step =    2113      New day, DATE Y/M/D = 0001/01/12      nday_year = 012
+         nsec_year =   950625   nsec_month =  950625   nsec_day =   225
+   nsec_monday =   432225
+======>> time-step =    2305      New day, DATE Y/M/D = 0001/01/13      nday_year = 013
+         nsec_year =  1037025   nsec_month = 1037025   nsec_day =   225
+   nsec_monday =   518625
+======>> time-step =    2497      New day, DATE Y/M/D = 0001/01/14      nday_year = 014
+         nsec_year =  1123425   nsec_month = 1123425   nsec_day =   225
+   nsec_monday =   605025
+======>> time-step =    2689      New day, DATE Y/M/D = 0001/01/15      nday_year = 015
+         nsec_year =  1209825   nsec_month = 1209825   nsec_day =   225
+   nsec_monday =    86625
+======>> time-step =    2881      New day, DATE Y/M/D = 0001/01/16      nday_year = 016
+         nsec_year =  1296225   nsec_month = 1296225   nsec_day =   225
+   nsec_monday =   173025
+======>> time-step =    3073      New day, DATE Y/M/D = 0001/01/17      nday_year = 017
+         nsec_year =  1382625   nsec_month = 1382625   nsec_day =   225
+   nsec_monday =   259425
+======>> time-step =    3265      New day, DATE Y/M/D = 0001/01/18      nday_year = 018
+         nsec_year =  1469025   nsec_month = 1469025   nsec_day =   225
+   nsec_monday =   345825
+======>> time-step =    3457      New day, DATE Y/M/D = 0001/01/19      nday_year = 019
+         nsec_year =  1555425   nsec_month = 1555425   nsec_day =   225
+   nsec_monday =   432225
+======>> time-step =    3649      New day, DATE Y/M/D = 0001/01/20      nday_year = 020
+         nsec_year =  1641825   nsec_month = 1641825   nsec_day =   225
+   nsec_monday =   518625
+======>> time-step =    3841      New day, DATE Y/M/D = 0001/01/21      nday_year = 021
+         nsec_year =  1728225   nsec_month = 1728225   nsec_day =   225
+   nsec_monday =   605025
+======>> time-step =    4033      New day, DATE Y/M/D = 0001/01/22      nday_year = 022
+         nsec_year =  1814625   nsec_month = 1814625   nsec_day =   225
+   nsec_monday =    86625
+======>> time-step =    4225      New day, DATE Y/M/D = 0001/01/23      nday_year = 023
+         nsec_year =  1901025   nsec_month = 1901025   nsec_day =   225
+   nsec_monday =   173025
+======>> time-step =    4417      New day, DATE Y/M/D = 0001/01/24      nday_year = 024
+         nsec_year =  1987425   nsec_month = 1987425   nsec_day =   225
+   nsec_monday =   259425
+======>> time-step =    4609      New day, DATE Y/M/D = 0001/01/25      nday_year = 025
+         nsec_year =  2073825   nsec_month = 2073825   nsec_day =   225
+   nsec_monday =   345825

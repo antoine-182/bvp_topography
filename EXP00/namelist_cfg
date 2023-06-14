@@ -58,7 +58,7 @@
   rn_beta = 2.e-11   ! beta-plan coriolis parameter  [1/m.s]
   rn_f0   = 0.5e-4   ! f-plan coriolis parameter     [1/s]
   !
-  ln_bnd_refine = .true.      ! boundary mesh refinement
+  ln_bnd_refine = .false.      ! boundary mesh refinement
         nn_bnd         = 0       ! 0 (North) - 1 (West) - 2 (South) - 3 (West)
         rn_bnd_ref     = 4.      ! resolution aimed
         rn_bnd_len     = 100  ! lenghts refined[km]

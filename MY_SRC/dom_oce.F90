@@ -179,8 +179,6 @@ MODULE dom_oce
  !! bathymetry field
  !! ------------
  REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:)     ::   batht             !: bathymetry     [-]
- REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:)     ::   bathu             !: bathymetry     [-]
- REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:)     ::   bathv             !: bathymetry     [-]
 #endif
 
    INTEGER, PUBLIC ::   nla10              !: deepest    W level Above  ~10m (nlb10 - 1)
@@ -298,7 +296,7 @@ CONTAINS
             &     k_top0(jpi,jpj) , STAT=ierr(ii) )
          !
 #if defined key_bvp_bath
-    ALLOCATE( batht(jpi,jpj), bathu(jpi,jpj), bathv(jpi,jpj), STAT=ierr(ii) )
+    ALLOCATE( batht(jpi,jpj), STAT=ierr(ii) )
 #endif
          !
       ii = ii+1

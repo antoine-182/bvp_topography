@@ -759,22 +759,13 @@ CONTAINS
           z1y = z1y * 0.5_wp
           ! ze1 = z1x1
           ze1 = MIN(z1x,z1y)
-          batht(ji,jj) = 4500._wp * ( 1 - ze1 ) + ze1 * 5000._wp
+          !batht(ji,jj) = 4500._wp * ( 1 - ze1 ) + ze1 * 5000._wp
+          batht(ji,jj) = 5000._wp - 500._wp * (1._wp - rn_abp) * ( 1 - ze1 ) ! ze1 = 1 open ocean ; 0 in land
           !
         END_2D
       END DO
       !
       CALL lbc_lnk( 'dommsk', batht,  'T', 1._wp)
-      !
-      DO jj = 1, jpjm1
-         DO ji = 1, jpim1
-               bathu(ji,jj) = 0.5_wp  * ( batht(ji,jj) + batht(ji+1,jj  ) )
-               bathv(ji,jj) = 0.5_wp  * ( batht(ji,jj) + batht(ji  ,jj+1) )
-        END DO
-     END DO
-      !
-      CALL lbc_lnk_multi( 'dommsk', bathv  , 'V', 1._wp,     &
-          &                         bathu  , 'U', 1._wp,     kfillmode=jpfillcopy )
 #endif
 
   IF (ln_hdiv_AD) THEN

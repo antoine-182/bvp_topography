@@ -23,11 +23,11 @@
 !   nn_it000    =       1   !  first time step
 !
 !    nn_itend    =       1   !  last  time step
-!    nn_itend    =   86400   !  30min  - 5y - 1/4  deg
+    nn_itend    =   172800   !  15min  - 5y 
 !
 !    nn_itend    =   432000   !  30min  - 25y - 1/4  deg
 !    nn_itend    =   864000   !  15min  - 25y - 1/8  deg
-    nn_itend    =  1728000   !  7min30 - 25y - 1/16 deg
+!    nn_itend    =  1728000   !  7min30 - 25y - 1/16 deg
 !    nn_itend    =  4320000   !  3min   - 25y - 1/32 deg
 !    nn_itend    =  8640000   !  1min30 - 25y - 1/48 deg
 !
@@ -111,8 +111,8 @@
    !
 !   rn_Dt      = 3600.     !  1h    - 1 deg cfg - time step for the dynamics [s]
 !   rn_Dt      = 1800.     !  30min  - 1/4  deg
-!   rn_Dt      = 900.     !  15min  - 1/8  deg
-   rn_Dt      = 450.     !  7min30 - 1/16 deg
+   rn_Dt      = 900.     !  15min  - 1/8  deg
+!   rn_Dt      = 450.     !  7min30 - 1/16 deg
 !   rn_Dt      = 180.     !  3min   - 1/32 deg
 !   rn_Dt      = 90.      !  1min30 - 1/48 deg
    ln_meshmask = .true.   !  =T create a mesh file

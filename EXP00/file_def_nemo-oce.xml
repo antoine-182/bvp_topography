@@ -19,12 +19,11 @@
       <file_group id="1d" output_freq="1d"  output_level="10" enabled=".TRUE."/> <!-- 1d files -->
       <file_group id="3d" output_freq="3d"  output_level="10" enabled=".TRUE."/> <!-- 3d files -->
       <file_group id="5d" output_freq="5d"  output_level="10" enabled=".TRUE."/> <!-- 5d files -->
-      <file_group id="1m" output_freq="1mo"  output_level="10" enabled=".TRUE."> <!-- 5d files -->
+      <file_group id="1h" output_freq="1h"  output_level="10" enabled=".TRUE."> <!-- 5d files -->
 
       <file id="file1" name_suffix="_grid_T" description="ocean T grid variables" >
           <field field_ref="e3t"          name="e3t"              operation = "instant" />
           <field field_ref="ssh"         name="ssh" long_name="sea surface height"                operation = "instant" />
-          <field field_ref="ssh"         name="sshmeaned" long_name="sea surface height meaned (10d)"     operation="average" freq_op="10d" />
           <field field_ref="rpo"          name="rpo"       operation = "instant" />
           <field field_ref="batht"          name="batht"       operation = "instant" />
           <!-- <field field_ref="ahmts"      name="ahmts"    />

@@ -96,6 +96,7 @@ CONTAINS
       INTEGER  ::   ios, inum
       REAL(wp), ALLOCATABLE, DIMENSION(:,:)   ::   zwf   ! 2D workspace
       REAL(wp), DIMENSION(jpi,jpj,jpk) ::   z3d   ! 3D workspace
+      REAL(wp), DIMENSION(jpi,jpj) ::   z2d   ! 2D workspace
       REAL(wp) :: zES,zEN,zWS,zWN,zl,z0,ze1, ze2, ze3,z1d, z1x, z1y, z1x1, z1x2, z1y1, z1y2 ! local real
       !!
       NAMELIST/namlbc/ rn_shlat, ln_vorlat
@@ -390,26 +391,22 @@ CONTAINS
       ! Shapiro(1/2) on i and j components separatly
       WRITE(numout,*) 'dommsk : shapiro filter applied on batht (',nn_smo,' times)'
       DO jl = 1, nn_smo
-        z3d(:,:,:) = batht(:,:,:)
-        DO jk = 1,jpkm1
-          DO jj = 2, jpjm1
-             DO ji = 2, jpim1
-                 z3d(ji,jj,jk) = 0.25_wp * batht(ji-1,jj,jk) + 0.5_wp * batht(ji,jj,jk) + 0.25_wp * batht(ji+1,jj,jk)
-             END DO
-          END DO
-        END DO
-        CALL lbc_lnk( 'dommsk', z3d,  'T', 1._wp, kfillmode=jpfillcopy )
-        batht(:,:,:) = z3d(:,:,:)
+        z2d(:,:) = batht(:,:)
+         DO jj =  1, jpj
+            DO ji = 2, jpim1
+               z3d(ji,jj) = 0.25_wp * batht(ji-1,jj) + 0.5_wp * batht(ji,jj) + 0.25_wp * batht(ji+1,jj)
+            END DO
+         END DO
+        CALL lbc_lnk( 'dommsk', z2d,  'T', 1._wp, kfillmode=jpfillcopy )
+        batht(:,:) = z2d(:,:)
         !
-        DO jk = 1,jpkm1
-          DO jj = 2, jpjm1
-             DO ji = 2, jpim1
-               z3d(ji,jj,jk) = 0.25_wp * batht(ji,jj-1,jk) + 0.5_wp * batht(ji,jj,jk) + 0.25_wp * batht(ji,jj+1,jk)
-             END DO
-          END DO
-        END DO
-        CALL lbc_lnk( 'dommsk', z3d,  'T', 1._wp, kfillmode=jpfillcopy )
-        batht(:,:,:) = z3d(:,:,:)
+         DO jj = 2, jpjm1
+            DO ji = 1, jpi
+            z3d(ji,jj) = 0.25_wp * batht(ji,jj-1) + 0.5_wp * batht(ji,jj) + 0.25_wp * batht(ji,jj+1)
+            END DO
+         END DO
+        CALL lbc_lnk( 'dommsk', z2d,  'T', 1._wp, kfillmode=jpfillcopy )
+        batht(:,:) = z2d(:,:)
 #endif
 
   IF (ln_hdiv_AD) THEN

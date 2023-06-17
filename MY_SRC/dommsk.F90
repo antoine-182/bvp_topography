@@ -394,7 +394,7 @@ CONTAINS
         z2d(:,:) = batht(:,:)
          DO jj =  1, jpj
             DO ji = 2, jpim1
-               z3d(ji,jj) = 0.25_wp * batht(ji-1,jj) + 0.5_wp * batht(ji,jj) + 0.25_wp * batht(ji+1,jj)
+               z2d(ji,jj) = 0.25_wp * batht(ji-1,jj) + 0.5_wp * batht(ji,jj) + 0.25_wp * batht(ji+1,jj)
             END DO
          END DO
         CALL lbc_lnk( 'dommsk', z2d,  'T', 1._wp, kfillmode=jpfillcopy )
@@ -402,7 +402,7 @@ CONTAINS
         !
          DO jj = 2, jpjm1
             DO ji = 1, jpi
-            z3d(ji,jj) = 0.25_wp * batht(ji,jj-1) + 0.5_wp * batht(ji,jj) + 0.25_wp * batht(ji,jj+1)
+            z2d(ji,jj) = 0.25_wp * batht(ji,jj-1) + 0.5_wp * batht(ji,jj) + 0.25_wp * batht(ji,jj+1)
             END DO
          END DO
         CALL lbc_lnk( 'dommsk', z2d,  'T', 1._wp, kfillmode=jpfillcopy )

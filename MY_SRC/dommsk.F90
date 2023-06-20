@@ -327,6 +327,7 @@ CONTAINS
       ! -------------------------------------------------
       bmpu(:,:,:) = 0._wp
       bmpv(:,:,:) = 0._wp
+      z1d = 0.5_wp * (1._wp + rn_abp)
       !
       WHERE(vmask(:,:,:) == 0._wp)
         bmpv  (:,:,:) = 0             ! used on V points
@@ -338,10 +339,10 @@ CONTAINS
       WRITE(numout,*) 'dommsk : impermeability bmp (sigma) used nn_fsp=',nn_fsp
       SELECT CASE( nn_fsp )           ! == layer drag formulation        
       CASE ( 0 )
-        WHERE(rpou(:,:,:) <= 0.51_wp)
+        WHERE(rpou(:,:,:) <= z1d)
           bmpu  (:,:,:) = rn_fsp             ! used on V points
         END WHERE
-        WHERE(rpov(:,:,:) <= 0.51_wp)
+        WHERE(rpov(:,:,:) <= z1d)
           bmpv  (:,:,:) = rn_fsp             ! used on U points
         END WHERE
       CASE ( 1 )

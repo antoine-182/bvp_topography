@@ -100,7 +100,7 @@
   rn_cnp     = 2       ! width of the penalised interface              [-]
   nn_smo     = 0       ! nb of passes of Shapiro filters            [-]
   rn_fsp     = 1.e-4       ! friction parameter 1/epsilon of the permeability               [1/s]
-      nn_fsp = 0          ! =0   rn_fsp              applied for rpo < 1/2
+      nn_fsp = 0          ! =0   rn_fsp              applied up to half value of rpo
                           ! =1   rn_fsp / rpo        applied for rpo < 1
   !
 /
